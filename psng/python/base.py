@@ -98,7 +98,12 @@ class ProbeScreenBase(object):
             if "G1 " in l:
                 l += " F#<_ini[TOOLSENSOR]RAPID_SPEED>"
             self.command.mdi(l)
-            self.command.wait_complete()
+            rv = self.command.wait_complete(50)
+            if rv == -1:
+                message = _("command timed out")
+                secondary = _("please check self.command.wait_complete timeout in psng base.py")
+                self.warning_dialog(message, secondary=secondary)
+                return -1
             if self.error_poll() == -1:
                 return -1
         return 0
